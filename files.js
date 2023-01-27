@@ -1,7 +1,6 @@
 // The file system
 // Node.js has the ability to read, write, and delete files within the file system, which is a very important tool and cannot be done in vanilla javascript
 // In order to do this, we first need the fs module, which is built into Node.js (fs stands for "file system")
-const { captureRejectionSymbol } = require('events');
 const fs = require('fs');
 
 // reading files
