@@ -8,8 +8,26 @@ const http = require('http');
 // within the callback function, we get access to two different objects: the request (req) object, and the response (res) object
 // the request object is loaded with different information about the request, ex: the url, request type, etc
 // the response object is what is used to send a response to the user in the browser
-const server = http.createServer(() => {
+const server = http.createServer((req, res) => {
   console.log('request made')
+  // req.url shows us the url after 3000, and req.method shows us the request type, which in this case is a GET.
+  console.log(req.url, req.method);
+
+  // response headers gives the browser information about what kind of response is coming back to it
+  // This could be text, html, json, etc
+  // response headers can also do things such as set cookies
+  //res.setHeader has 2 arguments: first is the name of the value, and the second is specifying the content type.
+  // There are 3 steps to sending a response to the header: 
+  // First is to set the header
+  // set header content type
+  res.setHeader('Content-Type', 'text/html');
+  // Next step is to write the content you want to send back to the browser
+  // res.write lets you return content to the browser
+  // we can use res.write numerous times. It writes both of those one after the other
+  res.write('<h1>hello gamers<h1/>');
+  res.write('<h2>what\'s poppin my negros<h2/>');
+  // Lastly, we use res.end, which ends the response to the browser
+  res.end();
 });
 // NOTE: we have this server now, but it is not actually doing anything. It is just floating in our file. It is not actively listening for requests
 // In order to actually use this server, we have to invoke the listen method. 
