@@ -1,6 +1,8 @@
 // In order to create a server, we need the http module
 const http = require('http');
 
+const fs = require('fs');
+
 // .createServer() is the method that actually creates the server
 // You can optionally store the instance of the server if you want to. 
 // this function takes in a callback function as a parameter
@@ -21,13 +23,24 @@ const server = http.createServer((req, res) => {
   // First is to set the header
   // set header content type
   res.setHeader('Content-Type', 'text/html');
+  // This line sends the index.html file as the data parameter, and runs it if there is no errors
+  fs.readFile('./views/index.html', (err, data) => {
+    if (err) {
+      console.log(err);
+      res.end();
+    } else {
+      // if you are only returning one line, we can take a shortcut and just use res.end() and pass the data as an argument
+      // res.write(data);
+      // res.end();
+      res.end(data);
+    }
+  })
   // Next step is to write the content you want to send back to the browser
   // res.write lets you return content to the browser
   // we can use res.write numerous times. It writes both of those one after the other
-  res.write('<h1>hello gamers<h1/>');
-  res.write('<h2>what\'s poppin my bois<h2/>');
+  // res.write();
   // Lastly, we use res.end, which ends the response to the browser
-  res.end();
+  // res.end();
 });
 // NOTE: we have this server now, but it is not actually doing anything. It is just floating in our file. It is not actively listening for requests
 // In order to actually use this server, we have to invoke the listen method. 
