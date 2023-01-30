@@ -25,7 +25,7 @@ const server = http.createServer((req, res) => {
   // res.write lets you return content to the browser
   // we can use res.write numerous times. It writes both of those one after the other
   res.write('<h1>hello gamers<h1/>');
-  res.write('<h2>what\'s poppin my negros<h2/>');
+  res.write('<h2>what\'s poppin my bois<h2/>');
   // Lastly, we use res.end, which ends the response to the browser
   res.end();
 });
