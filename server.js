@@ -2,6 +2,7 @@
 const http = require('http');
 
 const fs = require('fs');
+const { isAbsolute } = require('path');
 
 // .createServer() is the method that actually creates the server
 // You can optionally store the instance of the server if you want to. 
@@ -19,12 +20,34 @@ const server = http.createServer((req, res) => {
   // This could be text, html, json, etc
   // response headers can also do things such as set cookies
   //res.setHeader has 2 arguments: first is the name of the value, and the second is specifying the content type.
-  // There are 3 steps to sending a response to the header: 
+  // There are 3 steps to sending a response to the header: set header, write data, and res.end()
   // First is to set the header
   // set header content type
   res.setHeader('Content-Type', 'text/html');
-  // This line sends the index.html file as the data parameter, and runs it if there is no errors
-  fs.readFile('./views/index.html', (err, data) => {
+
+  // As of right now, there is only one view a user can see, that being the index.html page
+  // Here, we are going to add the ability to see different pages dependant on the url
+  // A simple way to do that is to create a variable, and append to that variable depending on what is clicked
+  // Here, we are setting variable path = './views/' because all of our html pages are in the views folder
+  // after this, we will make a switch statement to show different pages depending on req.url
+  // what this switch statement is doing is checking the url and changing the path as a result
+  // if the url does not match any of these options, the page will be set to the 404.html page as default
+  let path = './views/';
+  switch(req.url) {
+    case '/': 
+      path += 'index.html';
+      break;
+    case '/about':
+      path += 'about.html';
+      break;
+    default: 
+      path += '404.html'
+      break;
+  }
+
+
+  // This line sends the path variable as the data parameter, and runs it if there is no errors
+  fs.readFile(path, (err, data) => {
     if (err) {
       console.log(err);
       res.end();
