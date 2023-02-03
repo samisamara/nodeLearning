@@ -36,14 +36,33 @@ const server = http.createServer((req, res) => {
   switch(req.url) {
     case '/': 
       path += 'index.html';
+      res.statusCode = 200;
       break;
     case '/about':
       path += 'about.html';
+      res.statusCode = 200;
       break;
     default: 
       path += '404.html'
+      res.statusCode = 404;
       break;
-  }
+  };
+  // NOTE: The status code describes what type of response is being sent to the browser and how successful the response was
+  // There are many different status codes for loads of different scenarios. Here are a few examples: 
+  // 200 - OK
+  // 301 - Resource moved
+  // 404 - Not found
+  // 500 - Internal server error
+  // As said earlier, there are loads of different status codes for loads of different reasons
+  // But they all fall under different ranges, being 100, 200, 300, 400, and 500 range. Here is what each range is for: 
+  // 100 Range - informational responses (for the browser)
+  // 200 Range - success code (everything goes to plan)
+  // 300 Range - codes for redirects
+  // 400 Range - user or client error codes
+  // 500 Range - server error codes
+  // To add a status code, we simply need to use res.statusCode and assign a value to it. This can be seen in the switch statement above this comment block
+  // We are making statusCode = 200 in the '/' and '/about' cases because if the code reached that point, that means everything went well
+  // We make statusCode = 404 in the default case because that would mean the webpage does not exist/could not be found, resulting in an error
 
 
   // This line sends the path variable as the data parameter, and runs it if there is no errors
@@ -55,6 +74,7 @@ const server = http.createServer((req, res) => {
       // if you are only returning one line, we can take a shortcut and just use res.end() and pass the data as an argument
       // res.write(data);
       // res.end();
+      // This line ends the response, completing the job
       res.end(data);
     }
   })
