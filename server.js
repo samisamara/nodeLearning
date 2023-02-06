@@ -42,6 +42,18 @@ const server = http.createServer((req, res) => {
       path += 'about.html';
       res.statusCode = 200;
       break;
+    // There may be a case where you change the path name to be something else, but people might still be using an old link method
+    // Example: www.webpage.com/about turning into www.webpage.com/about-me
+    // In order to prevent errors, all we have to do is the following: 
+    // 1. create a new switch case statement with the new old/new path name
+    // 2. set the status code to 301 to show the file location has been moved
+    // 3. set the header to the correct path
+    // 4. end the process with res.end();
+    case '/about-me':
+      res.statusCode = 301;
+      res.setHeader('Location', '/about');
+      res.end();
+      break;
     default: 
       path += '404.html'
       res.statusCode = 404;
