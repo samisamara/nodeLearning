@@ -1,7 +1,10 @@
 // In order to create a server, we need the http module
 const http = require('http');
-
 const fs = require('fs');
+// just as stated previously, there are plenty of modules we can include in our projects. This list also includes third party packages
+// Node will always know to automatically look in the node_modules folder for information
+// we do not have to call the lodash variable "_", we can call it whatever we want. But it is common practice to just call it "_".
+const _ = require('lodash');
 const { isAbsolute } = require('path');
 
 // .createServer() is the method that actually creates the server
@@ -12,9 +15,32 @@ const { isAbsolute } = require('path');
 // the request object is loaded with different information about the request, ex: the url, request type, etc
 // the response object is what is used to send a response to the user in the browser
 const server = http.createServer((req, res) => {
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  // lodash
+  // these are different functions included from the lodash library
+
+  // If we want to create a random number, we can do that with lodash's .random() function
+  // We can even specify a range within the paranthesis
+  const num = _.random(0, 20);
+  console.log(num);
+
+  // If we want a function to only be allowed to run once, we can use lodash to do that
+  // the way we would do that is call the .once() function, and place our callback function inside that
+  const greet = _.once(() => {
+    console.log('hello');
+  });
+  // now if we try to run this function twice, it will work the first time, but do nothing anytime after that.
+  greet();
+  greet();
+  // There are plenty of other lodash methods, which can all be viewed in the lodash website
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
   console.log('request made')
   // req.url shows us the url after 3000, and req.method shows us the request type, which in this case is a GET.
-  console.log(req.url, req.method);
+  // console.log(req.url, req.method);
 
   // response headers gives the browser information about what kind of response is coming back to it
   // This could be text, html, json, etc
