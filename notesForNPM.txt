@@ -47,4 +47,5 @@ If we just want to install a package locally (only within 1 project) we simply j
 
 [npm i] works the same as [npm install]. "i" is just a shortcut for "install"
 
-A package we installed globally is the nodemon package. This lets us run a server and update the code without having to constantly close the server and reopen it
+A package we installed globally is the nodemon package. 
+This lets us run a server and update the code without having to constantly close the server and reopen it
