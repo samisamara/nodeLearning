@@ -9,9 +9,9 @@
 
 // 1: we have to install express into our app [npm install express]
 
-// 2: we have to do is require express
-// This code returns a function, and we store it in express
-const express = require('express')
+// 2: we have to require express
+// This code returns a function, and we store it in the variable named express
+const express = require('express');
 
 // 3: we have to set up an express app
 // what this line does is it invokes the express() function, to create an instance of an express app, which is stored in the "app" constant
@@ -24,7 +24,7 @@ const app = express();
 app.listen(3000);
 
 // 5: We've set up an express app, and are now listening for requests in port 3000, now we want to actually respond to those requests
-// in order to do this, we call the app variable, and the .get method
+// in order to do this, we call the app variable, and the .get() method
 // This takes in two arguments
 // first, what path or url you want to listen to. In this case, we are listening to the root of the domain
 // the second argument is a function, and this function takes in a request and response object, so we can do something with those.
@@ -39,7 +39,23 @@ app.get('/', (req, res) => {
   // Another benefit to this is it also infers the status code, so we no longer need to manually set that
   // KEEP IN MIND THAT WE STILL SOMETIMES WANT TO MANUALLY SET STATUS CODES
 
-  res.send('<p>home page</p>');
+  // it is almost never a good ideal to send html as a response. To perform the res.send command in Express, we will use res.sendFile()
+  // res.sendFile() has two parameters. First is the path to that file
+  // the first parameter has a slight problem. It is not meant to be a relative path. So we need to tell Express where it is relavant from.
+  // That is where the second parameter comes into play. Here, we are making an object with a root argument that specifies what the root should be
+  // That root is going to be the current directory, which we find by using __dirname
+  // Here is a comparison between the two ways of sending a response
+  // res.send('<p>home page</p>');
+  res.sendFile('./views/index.html', { root: __dirname });
 
 });
+
+// Just like in plain Node, we need to have different route handlers set up for different urls. 
+// Node.js uses a switch statement to do this, but that can get really messy really fast
+// When adding route handlers in Express, this process is simplified greatly.
+// All we need to do to add route handlers in Express is simply add multiple .get() handlers. Here is an example:
+app.get('/about', (req, res) => {
+  res.sendFile('./views/about.html', { root: __dirname });
+});
+// We can do this as many times as we need
 
