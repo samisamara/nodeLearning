@@ -57,5 +57,36 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
   res.sendFile('./views/about.html', { root: __dirname });
 });
-// We can do this as many times as we need
+
+// In Node, we learned how to do redirects, where we matched a case against a specific url, set the status code, and we set a header to be the location
+// Redirects in Express is extremely easy to do. All we need to do is use the res.redirect() method, which is already built in to Express
+// All it needs is a single argument, which is what we want to force our url to redirect to.
+// Under the hood, Express sends this response to the browser, and forces it into a new requst for /about
+// It also automatically sets the status code for us, so we do not need to manually set it ourselves
+app.get('/about-us', (req, res) => {
+  res.redirect('/about');
+});
+
+// In Node, we learned how to add a 404 page by making it the default option in the switch statement and manually setting the status code to 404
+// We can add 404s in Express as well, in a much easier fashion
+// In order to add a 404 page in Express, we use the .use() function, which is built into Express
+// We use the .use() function to create middleware, and fire middleware functions in Express
+// There is much more we can use the .use() function for, but for now, all we care about is how can use it to make a 404 page
+// Inside the .use() function, we fire a callback function, which also has access to the request and response objects
+// The use function is going to fire for every single request coming in, but only if the request reaches this point in the code
+// When we make a search and press enter, then Express will run through the code from top to bottom and look at every get handler it finds
+// If it finds a match with the urls, it will fire the corresponding function. If it doesn't find a match, it carries on down the file
+// When it finds a match, if Express sends a response to the brower within that match, then Express no longer carries on down to the rest of the code
+// This is true even if those other handlers match as well, because we've already sent a response
+// If we reach the bottom and there still has not been a match, it will see the app.use() function, and use it no matter what
+// This is because the .use() function basically is saying "use this function for every incoming request"
+// We do not need to set a url because it will run regardless of what the url is
+// It is important that this function is placed at the bottom, because if it were to be placed above any get handlers, it would fire for every request
+// This would mean anything below the .use() function would block anything underneath, so any get handlers would never get reached
+// ALSO: while the .get() functions automatically set the status codes for us, this is not the case for .use()
+// We actually have to manually set the status code to 404 ourselves, which we do by using the .status(404) function, and chain the rest of the code behind
+// We can do this because .status() returns the response object itself, so we can just tack on the .sendFile() method and that still sends the file for us
+app.use((req, res) => {
+  res.status(404).sendFile('./views/404.html', { root: __dirname });
+})
 
