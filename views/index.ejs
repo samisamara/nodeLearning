@@ -5,12 +5,31 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog Samara</title>
+  <!-- As stated below, we know how to output a single value from the server thanks to ejs. We are going use the value being sent to make a title -->
+  <!-- We do not need to reference the object first, we just reference the title directly -->
+  <title>Blog Samara | <%= title %></title>
 </head>
 <body>
 
+  <!-- This is how we inject dynamic content into our webpages -->
+  <!-- To do this, we use ejs tags, which looks like this: <% %> -->
+  <!-- Inside the two brackets, we can do some dynamic code -->
+  <!-- For an example, we can use any kind of javascript, such as making a variable -->
+  <!-- This code will run as JavaScript, but not on the front end. It runs this JavaScript code on the server -->
+  <!-- In this case, we made a variable. Now, inside this template, we can output this variable somewhere if we wanted to -->
+  <!-- This ejs tag is NOT for outputting a value. That will be done somewhere else -->
+  <!-- When we are just doing code, that is not being outputted to the screen, we format it like this -->
+  <!-- We do not actually want to do this, since the goal is to pass data from the server. This is only for learning purposes, & will be commented out -->
+  <!-- <% const name = 'Sonic' %> -->
+  
+
   <nav>
     <div class="site-title">
+      <!-- To output a value, first we need an ejs tag, just like before: <% %> -->
+      <!-- BUT, when we are outputting a single value, we need to put an equal sign at the opening bracket -->
+      <!-- When we are outputting a value to the screen, we need the equal sign -->
+      <!-- Like earlier, the goal is to pass data from the server. This is only for learning purposes, & will be commented out -->
+      <!-- <p><%= name %></p> -->
       <a href="/"><h1>Blog Samara</h1></a>
       <p>A Sami Samara Site</p>
     </div>
@@ -24,6 +43,25 @@
   <!-- Later on, we are going to display all of our blogs here. This is where the dynamic content will be -->
   <div class="blogs content">
     <h2>All Blogs</h2>
+    <!-- On the server side, we created an array of blogs and sent them to the index.ejs view -->
+    <!-- Here, we are going to cycle through the array and output some html for each blog -->
+    <!-- The first thing we want to do is check if the array length for the blogs is more that 0 -->
+    <!-- To do this, we do the exact same thing weld do for JavaSript. However, to inject it into our code, we use an ejs tag -->
+    <!-- We do not need the equal sign yet because we are just doing generic JavaScript logic. We are not outputting a variable yet -->
+    <!-- The following code looks a bit weird, but to break it down, we are putting an opening and closing ejs bracket on each side of the lines -->
+    <!-- this means even the closing bracket, which is found on a different line, gets its own individual brackets -->
+    <!-- We do this because the logic for for cycling through the blogs array is using ejs's code, meanwhile the actual output is handled with html -->
+    <!-- The same is applied to the forEach method we use. Think of it like sandwhiching html in between JavaScript -->
+    <!-- As for actually outputting the data, that is when we use ejs brackets with the equal sign, so we can pull the values and output them -->
+    <!-- After all of this, we are adding an else bracket, again using ejs brackets. This else bracket will display html if there are no blogs -->
+    <% if (blogs.length > 0) { %>
+      <% blogs.forEach(blog => { %>
+        <h3 class="title"><%= blog.title %></h3>
+        <p class="snippet"><%= blog.snippet %></p>
+      <% }) %>
+    <% } else { %>
+      <p>There are no blogs to display</p>
+    <% } %>
 
   </div>
   
