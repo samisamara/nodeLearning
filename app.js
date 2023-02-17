@@ -12,6 +12,8 @@
 // And then the html, with the resulting data, inside it, will be returned to the browser
 // This whole process is called server-side rendering
 
+// This is chapter5
+
 // Here are the steps to using ejs
 
 // First, we have to install ejs to our project [npm install ejs]
