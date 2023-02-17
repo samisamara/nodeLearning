@@ -1,0 +1,15 @@
+<!-- Before, we had a nav section that was identical in every single view page. -->
+<!-- What we can do to condense this a lot is to use an ejs tool, which is called partials -->
+<!-- Partials are a lot like components in React. There a blocks of code we are able to reuse in different files -->
+<!-- All the work to do this is on the server side. All that needs to be placed here is the actual html content -->
+<nav>
+  <div class="site-title">
+    <a href="/"><h1>Blog Samara</h1></a>
+    <p>A Sami Samara Site</p>
+  </div>
+  <ul>
+    <li><a href="/">Blogs</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blogs/create">New Blog</a></li>
+  </ul>
+</nav>

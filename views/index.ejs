@@ -1,14 +1,7 @@
 <!-- Something you will notice here is this code looks identical to html -->
 <!-- Technically, this is not html, it's actually ejs code. But ejs is extremely similar, almost 1-1 -->
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- As stated below, we know how to output a single value from the server thanks to ejs. We are going use the value being sent to make a title -->
-  <!-- We do not need to reference the object first, we just reference the title directly -->
-  <title>Blog Samara | <%= title %></title>
-</head>
+<%- include('./partials/head.ejs') %>
 <body>
 
   <!-- This is how we inject dynamic content into our webpages -->
@@ -21,24 +14,23 @@
   <!-- When we are just doing code, that is not being outputted to the screen, we format it like this -->
   <!-- We do not actually want to do this, since the goal is to pass data from the server. This is only for learning purposes, & will be commented out -->
   <!-- <% const name = 'Sonic' %> -->
-  
 
-  <nav>
-    <div class="site-title">
-      <!-- To output a value, first we need an ejs tag, just like before: <% %> -->
-      <!-- BUT, when we are outputting a single value, we need to put an equal sign at the opening bracket -->
-      <!-- When we are outputting a value to the screen, we need the equal sign -->
-      <!-- Like earlier, the goal is to pass data from the server. This is only for learning purposes, & will be commented out -->
-      <!-- <p><%= name %></p> -->
-      <a href="/"><h1>Blog Samara</h1></a>
-      <p>A Sami Samara Site</p>
-    </div>
-    <ul>
-      <li><a href="/">Blogs</a></li>
-      <li><a href="/about">About</a></li>
-      <li><a href="/blogs/create">New Blog</a></li>
-    </ul>
-  </nav>
+  <!-- To output a value, first we need an ejs tag, just like before: <% %> -->
+  <!-- BUT, when we are outputting a single value, we need to put an equal sign at the opening bracket -->
+  <!-- When we are outputting a value to the screen, we need the equal sign -->
+  <!-- Like earlier, the goal is to pass data from the server. This is only for learning purposes, & will be commented out -->
+  <!-- <p><%= name %></p> -->
+
+  <!-- Before, we had a nav section that was identical in every single view page. -->
+  <!-- What we can do to condense this a lot is to use an ejs tool, which is called partials -->
+  <!-- Partials are a lot like components in React. There a blocks of code we are able to reuse in different files -->
+  <!-- To use a partial, we have to include a minus sign (-) after the opening ejs bracket, similar to when we use equal signs (=) for outputting -->
+  <!-- The reason why we use a minus sign instead of an equal sign is when we use an equal sign, it escapes special characters -->
+  <!-- This means we end up with string value instead of raw html -->
+  <!-- The minus sign does not do that. So whenever we have to use the include() funciton, we have to use a minus sign to output that value instead -->
+  <!-- Next, we have to use the include() function,  -->
+  <!-- Lastly, inside the include() function, we have to build a relative path to the partial we want to use, like in the following: -->
+  <%- include('./partials/nav.ejs') %>
 
   <!-- Later on, we are going to display all of our blogs here. This is where the dynamic content will be -->
   <div class="blogs content">
@@ -64,6 +56,6 @@
     <% } %>
 
   </div>
-  
+  <%- include('./partials/footer.ejs') %>
 </body>
 </html>
