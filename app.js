@@ -15,6 +15,10 @@
 
 const express = require('express');
 const { now } = require('lodash');
+// There are tons of 3rd party middleware packages that are available for us to install for various reasons, such as loggers, security, cookies, etc
+// To show how to install npm packages, we will use morgan as an example. Morgan is a 3rd party middleware logger
+// First, we install morgan into our project, like we would other packages. Then, we have to require it like below:
+const morgan = require('morgan')
 
 const app = express();
 
@@ -22,15 +26,22 @@ app.set('view engine', 'ejs');
 
 app.listen(3000);
 
+// If we want to use a 3rd party package, first we have to use app.use(), and inside it, rather than using an arrow function, you just call the module
+// In morgan's case, we have to pass through an option for how it will be formatted. In this example, we chose the dev option
+app.use(morgan('dev'));
+
 // We are going to create our own custom middleware. This middleware will log out some details out to the console for every request
 // **hostname, path, and method are all properties on the request object
 // When we run this code, the function will work just fine, but express does not know what to do next, as in it does not know how to move on
-// 
-app.use((req, res) => {
+// .use() has the usual req and res parameters, but it also has access to the next() method.
+// The next() parameter is what tells the middleware function that it is ready to move to the next step
+app.use((req, res, next) => {
   console.log('new request made:');
   console.log('host:', req.hostname);
   console.log('path', req.path);
   console.log('method: ', req.method);
+  // The only thing we need to do to use next() is to simply invoke it. This tells the code it is done with the middleware, and is ready for the next log.
+  next();
 });
 
 app.get('/', (req, res) => {
