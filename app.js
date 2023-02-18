@@ -12,7 +12,6 @@
 // 3. Middleware to parse JSON data from requests
 // 4. Return 404 pages
 
-
 const express = require('express');
 const { now } = require('lodash');
 // There are tons of 3rd party middleware packages that are available for us to install for various reasons, such as loggers, security, cookies, etc
@@ -25,6 +24,19 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.listen(3000);
+
+// Middleware & static files
+// We cannot add css files in the same way we would a normal html page.
+// This is because the server protects our files automatically from users in a browser, so they could not just access any of our files whenever they want
+// So to allow the browser access to something, we have to specify what files should be allowed to be accessed, in other words, what files should be public
+// To do that, we can use some ready-made middleware that comes along with express, which is the static middleware
+// **static files examples are css files, images, and so on
+// To use static middleware, first we call app.use() like usual, than inside it, we use express.static()
+// Then inside express.static(), all we need to do is pass a folder name as a string. We will call this folder 'public'
+// This means that if we make a folder in the project's root called 'public', than anything in that folder will be made public to the front end
+// **in head.ejs (where we set up the link tag) we do not specify /public/ in the href. This is because the server will automatically look in there
+// **NOTE!!! MAKE SURE TO TYPE A "/" BEFORE STYLES.CSS OTHERWISE SOME FILES MAY NOT WORK
+app.use(express.static('public'))
 
 // If we want to use a 3rd party package, first we have to use app.use(), and inside it, rather than using an arrow function, you just call the module
 // In morgan's case, we have to pass through an option for how it will be formatted. In this example, we chose the dev option
@@ -57,9 +69,10 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
+// app.get('/create', (req, res) => {
 app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create Blog' });
-})
+  res.render('create', { title: 'Create a new Blog' });
+});
 
 app.get('/about-us', (req, res) => {
   res.redirect('/about', { title: 'About' });
