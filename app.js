@@ -12,6 +12,8 @@
 // 3. Middleware to parse JSON data from requests
 // 4. Return 404 pages
 
+// THIS IS CHAPTER 6
+
 const express = require('express');
 const { now } = require('lodash');
 // There are tons of 3rd party middleware packages that are available for us to install for various reasons, such as loggers, security, cookies, etc
