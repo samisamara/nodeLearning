@@ -1,12 +1,18 @@
-
-
-// THIS IS CHAPTER 6
+// This chapter is all about MongoDB, mongoose, and getting & saving data
+// This is a crucial chapter because without a proper database, we cannot save any data, like new blogs in this example
 
 const express = require('express');
 const { now } = require('lodash');
-const morgan = require('morgan')
+const morgan = require('morgan');
 
 const app = express();
+
+// The first step we need to use MongoDB is to first make a variable and set it equal to a string of the link we get from our MongoDB database
+// We get this string from MongoDB's cloud website
+// **We want to make this string AFTER where we declare our app, not before
+// When we copy and paste from MongoDB's website, we have to find where <password> is in the string, & replace it with the password we set up there
+// This string will be used later to make the connection to the database
+const dbURI = "mongodb+srv://samisamara548:Applestore99@nodelearning.l389pd2.mongodb.net/?retryWrites=true&w=majority";
 
 app.set('view engine', 'ejs');
 
