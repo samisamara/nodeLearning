@@ -7,6 +7,9 @@ const morgan = require('morgan');
 // The first step to incorperating Mongoose with MongoDB is to install it in our package [npm install mongoose]
 // After this, just like every other package, we have to require it's module and make a variable for it, like the line below
 const mongoose = require('mongoose');
+// We want to have access to the blog model we made so we can get and push blogs. 
+// To do this, we first give our variable a name, and then we require the route to that file
+const Blog = require('./models/blog');
 
 const app = express();
 
@@ -38,21 +41,86 @@ mongoose.connect(dbURI)
 // To do this, we are first going to create a new folder in the root of the project, and name it models
 // We want to create a model and a schema for a blog, so inside the models folder, we are going to make a new file called "blog.js"
 
-
+// register view engine
 app.set('view engine', 'ejs');
 
+// middleware & mongo sandbox routes
 app.use(express.static('public'));
-
 app.use(morgan('dev'));
 
-app.use((req, res, next) => {
-  console.log('new request made:');
-  console.log('host:', req.hostname);
-  console.log('path', req.path);
-  console.log('method: ', req.method);
-  next();
+// mongoose and mongo sandbox routes
+// Now that we made our Blog model, we want to actually use it.
+// This will be a sandbox route, we are going to hard code in our own blog to test this feature
+// The first thing we want to do is create a get handler, similar to what we did with 'get'ting our views
+// This will respond to requests to /add-blog, which is going to be used to add a blog to the collection
+// When that request comes in, we want to fire a callback, using the req and res object like usual
+// What we want to do is create a new instance of a blog document and then save that to the blogs database
+// Before anything, we have to import the Blog model, which we exported in blog.js. This will be done on the top of the file
+// Now that we imported Blog we can create a new instance of a blog by saying 'const blog = new Blog()' **We can call it whatever we want, but blog is best
+// To explain this bit of code, we are using the model to create a new instance of a blog document within the code
+// Inside Blog(), we pass an object with the different properties of this blog
+// Remember that inside the schema, we that each blog should have a title (which is a string), a snippet (also a string), and a body (also a string).
+// **We do not have to pass in the timestamps, mongoose automatically takes care of the timestamps for us
+// We will follow that schema and input our own hardcoded data in matching that schema
+app.get('/add-blog', (req, res) => {
+  const blog = new Blog({
+    title: 'new blog 2', 
+    snippet: 'about my new blog', 
+    body: 'more about my new blog'
+  });
+  // Now that we have our new instance of the blog, we can use a method on this to save it to the database, and all we have to do is call 'blog.save()'
+  // When we get a new instance of the blog model, it gives us a load of different methods that we can use. .save() is one of them
+  // Under the hood, here is what mongoose is doing: 
+  // First, it sees we used the Blog model, so it will look for the blogs collection based on the name
+  // Then, it takes the new document that we created with it's information, and it will save it to the blogs collection. Mongoose does all this for us
+  // This is an asynchronous function, so it will take some time, and it returns a promise, so we can add the .then() method
+  // This will fire a callback function when the promise resolves
+  // In the callback function, we get the 'result' object, so to show what is happening, we are going to send back a response of the result
+  // As usual, we also have the .catch() method with the error object, so we will use that in case there is a problem
+  blog.save()
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
+// Now we want to learn how to recieve all the current blogs in the collection
+// First, we are going to use another get handler
+// Just like before, we will also fire a callback function with the req and res objects
+// Now comes the part were we get all the current blogs. Earlier, we made a Blog model, and automatically a bunch of methods were made for it
+// The method we want to use to get all current blogs is Blog.find(). This gets us all of the documents in the "blogs" collection
+// Again, these callback functions are all asynchronous, so we can use .then() as well as the results object from the database when it is finished
+app.get('/all-blogs', (req, res) => {
+  Blog.find()
+    .then((results) => {
+      res.send(results);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+});
+
+// Here, we are going to learn how to find a single blog
+// Just like the other mongoose functions, we first call app.get()
+// Again, we call the Blog model, and the method we want to use this time is .findById()
+// Whenever we save a new document to the database, an ID is automatically created, which is called an ObjectdId
+// This is a unique type, and it is NOT a string when stored in MongoDB
+// But when are using mongoose, it handles the conversion of ObjectId into a string, and back again when we need to.
+// So if we want to find something by an ID, we can pass in a string in the .findByID() method, and Mongoose will handle that conversion and search for us
+// Again, this function is asynchronous
+app.get('/single-blog', (req, res) => {
+  Blog.findById('63f563bef2433ec179306457')
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+})
+
+// routes
 app.get('/', (req, res) => {
   const blogs = [
     {title: 'Sonic did a spin dash', snippet: 'Sonic did a spindash and it looked really cool. He than did a super peelout'},
