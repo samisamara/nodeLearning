@@ -1,45 +1,18 @@
-// This chapter is all about MongoDB, mongoose, getting & saving data, and outputting documents in views
-// This is a crucial chapter because without a proper database, we cannot save any data, like new blogs in this example
+// This is chapter 7
 
 const express = require('express');
 const { now } = require('lodash');
 const morgan = require('morgan');
-// The first step to incorperating Mongoose with MongoDB is to install it in our package [npm install mongoose]
-// After this, just like every other package, we have to require it's module and make a variable for it, like the line below
 const mongoose = require('mongoose');
-// We want to have access to the blog model we made so we can get and push blogs. 
-// To do this, we first give our variable a name, and then we require the route to that file
 const Blog = require('./models/blog');
 
 const app = express();
 
-// The first step we need to use MongoDB is to first make a variable and set it equal to a string of the link we get from our MongoDB database
-// We get this string from MongoDB's cloud website
-// **We want to make this string AFTER where we declare our app, not before
-// When we copy and paste from MongoDB's website, we have to find where <password> is in the string, & replace it with the password we set up there
-// This string will be used later to make the connection to the database
 const dbURI = "mongodb+srv://samisamara548:Applestore99@nodelearning.l389pd2.mongodb.net/?retryWrites=true&w=majority";
-// **When we run this code, we get a deprecation error. The mongoose.set line is just there to get rid of the deprecation error
 mongoose.set('strictQuery', true);
-// The next step for MongoDB+Mongoose is to use the mongoose object to connect to the database
-// The way we'd do this is to first call the mongoose object, and use a method called .connect()
-// This expects a connection string as an argument, which we have as dbURI
-// This line is actually an asynchronous task. This means it returns a promise. This means we are able to add a .then() method.
-// The .then() method will fire after the connection is complete, after it has connected to the database
-// In this callback function, we get a result, which we can use if needed
-// We also get access to a catch method, so in case there is an error, we can catch that error
-// This is very important because we do not want our server to be listening for requests until this connection has been made
-// For an example, if a user requests the homepage, and that homepage lists a load of data dependent on the database...
-// ...than we cant show that until the connection to the database has been established
-// A way to circumvent this problem is to take the [app.listen(3000)] line and place it in the .then() block.
-// This would make our website listen for requests only after the database has been established
 mongoose.connect(dbURI)
 .then((result) => app.listen(3000))
 .catch((err) => console.log(err))
-
-// The next step is to create a schema and model for data. In our case, it is the blog data
-// To do this, we are first going to create a new folder in the root of the project, and name it models
-// We want to create a model and a schema for a blog, so inside the models folder, we are going to make a new file called "blog.js"
 
 // register view engine
 app.set('view engine', 'ejs');
@@ -48,87 +21,8 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(morgan('dev'));
 
-// mongoose and mongo sandbox routes
-// Now that we made our Blog model, we want to actually use it.
-// This will be a sandbox route, we are going to hard code in our own blog to test this feature
-// The first thing we want to do is create a get handler, similar to what we did with 'get'ting our views
-// This will respond to requests to /add-blog, which is going to be used to add a blog to the collection
-// When that request comes in, we want to fire a callback, using the req and res object like usual
-// What we want to do is create a new instance of a blog document and then save that to the blogs database
-// Before anything, we have to import the Blog model, which we exported in blog.js. This will be done on the top of the file
-// Now that we imported Blog we can create a new instance of a blog by saying 'const blog = new Blog()' **We can call it whatever we want, but blog is best
-// To explain this bit of code, we are using the model to create a new instance of a blog document within the code
-// Inside Blog(), we pass an object with the different properties of this blog
-// Remember that inside the schema, we that each blog should have a title (which is a string), a snippet (also a string), and a body (also a string).
-// **We do not have to pass in the timestamps, mongoose automatically takes care of the timestamps for us
-// We will follow that schema and input our own hardcoded data in matching that schema
-// app.get('/add-blog', (req, res) => {
-//   const blog = new Blog({
-//     title: 'new blog 2', 
-//     snippet: 'about my new blog', 
-//     body: 'more about my new blog'
-//   });
-  // Now that we have our new instance of the blog, we can use a method on this to save it to the database, and all we have to do is call 'blog.save()'
-  // When we get a new instance of the blog model, it gives us a load of different methods that we can use. .save() is one of them
-  // Under the hood, here is what mongoose is doing: 
-  // First, it sees we used the Blog model, so it will look for the blogs collection based on the name
-  // Then, it takes the new document that we created with it's information, and it will save it to the blogs collection. Mongoose does all this for us
-  // This is an asynchronous function, so it will take some time, and it returns a promise, so we can add the .then() method
-  // This will fire a callback function when the promise resolves
-  // In the callback function, we get the 'result' object, so to show what is happening, we are going to send back a response of the result
-  // As usual, we also have the .catch() method with the error object, so we will use that in case there is a problem
-//   blog.save()
-//     .then((result) => {
-//       res.send(result);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
-
-// Now we want to learn how to recieve all the current blogs in the collection
-// First, we are going to use another get handler
-// Just like before, we will also fire a callback function with the req and res objects
-// Now comes the part were we get all the current blogs. Earlier, we made a Blog model, and automatically a bunch of methods were made for it
-// The method we want to use to get all current blogs is Blog.find(). This gets us all of the documents in the "blogs" collection
-// Again, these callback functions are all asynchronous, so we can use .then() as well as the results object from the database when it is finished
-// app.get('/all-blogs', (req, res) => {
-//   Blog.find()
-//     .then((results) => {
-//       res.send(results);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     })
-// });
-
-// Here, we are going to learn how to find a single blog
-// Just like the other mongoose functions, we first call app.get()
-// Again, we call the Blog model, and the method we want to use this time is .findById()
-// Whenever we save a new document to the database, an ID is automatically created, which is called an ObjectdId
-// This is a unique type, and it is NOT a string when stored in MongoDB
-// But when are using mongoose, it handles the conversion of ObjectId into a string, and back again when we need to.
-// So if we want to find something by an ID, we can pass in a string in the .findByID() method, and Mongoose will handle that conversion and search for us
-// Again, this function is asynchronous
-// app.get('/single-blog', (req, res) => {
-//   Blog.findById('63f563bef2433ec179306457')
-//     .then((result) => {
-//       res.send(result);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     })
-// })
-// **THESE ARE ALL EXAMPLES OF HOW TO ADD NEW DOCUMENTS, VIEW ALL, AND VIEW ONLY ONE DOCUMENT.  
-// **Everything is commented out because this is not how we want to actually utilize these features
-
 // routes
 app.get('/', (req, res) => {
-  // Before, we made dummy blogs and used those to render a list of non-existent blogs. 
-  // Now that we are learning how to save actual blogs we don't need the dummy blogs anymore, so we removed them
-  // Instead of rendering a view, we are going to make it so the home page automatically redirects to /blogs
-  // This means if you go to the home page, it will forward it on to the blogs page, and then it will render out all of the blogs from there
-  // We COULD make a separate home page, but for the sake of this practice tutorial, we are going to just redirect
   res.redirect('/blogs')
 });
 
@@ -141,18 +35,6 @@ app.get('/about-us', (req, res) => {
 });
 
 // blog routes
-// Here, we are going to make an ACTUAL home page that will render all of the current blogs
-// As know well by now, we will use app.get(), use the Blog.find() model and method, as well as the .then() and .catch() methods
-// In the index.ejs view, we are already expecting a property called "blogs"
-// What we can do is pass the array of blogs we get back into the index view, and we do not have to change anything at all in the index view
-// Because of this, we are going to render the index view, and we are also going pass in some data
-// The first piece of data we are going to pass in is a title, because in index.ejs, we were expecting a title in the head
-// The next piece of data we are going to pass in is whatever we get in the results object, that being all of the blogs
-// The property name in the index view is blogs, and we are passing in the results, so the line of code is "blogs: result"
-// And that is how we can use the model to display everything
-// **another method we can use if we want is .sort(), which lets us sort by any particular field inside the documents
-// **here, we will use createdAt which was the timestamps that mongoose automatically added on for us
-// **we are going to give it a value of "-1", which means ascending order (newest to oldest). "1" is the complete opposite of that.
 app.get('/blogs', (req, res) => {
   Blog.find().sort({ createdAt: -1 })
     .then((result) => {
