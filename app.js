@@ -62,12 +62,12 @@ app.use(morgan('dev'));
 // Remember that inside the schema, we that each blog should have a title (which is a string), a snippet (also a string), and a body (also a string).
 // **We do not have to pass in the timestamps, mongoose automatically takes care of the timestamps for us
 // We will follow that schema and input our own hardcoded data in matching that schema
-app.get('/add-blog', (req, res) => {
-  const blog = new Blog({
-    title: 'new blog 2', 
-    snippet: 'about my new blog', 
-    body: 'more about my new blog'
-  });
+// app.get('/add-blog', (req, res) => {
+//   const blog = new Blog({
+//     title: 'new blog 2', 
+//     snippet: 'about my new blog', 
+//     body: 'more about my new blog'
+//   });
   // Now that we have our new instance of the blog, we can use a method on this to save it to the database, and all we have to do is call 'blog.save()'
   // When we get a new instance of the blog model, it gives us a load of different methods that we can use. .save() is one of them
   // Under the hood, here is what mongoose is doing: 
@@ -77,14 +77,14 @@ app.get('/add-blog', (req, res) => {
   // This will fire a callback function when the promise resolves
   // In the callback function, we get the 'result' object, so to show what is happening, we are going to send back a response of the result
   // As usual, we also have the .catch() method with the error object, so we will use that in case there is a problem
-  blog.save()
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+//   blog.save()
+//     .then((result) => {
+//       res.send(result);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
 
 // Now we want to learn how to recieve all the current blogs in the collection
 // First, we are going to use another get handler
@@ -92,15 +92,15 @@ app.get('/add-blog', (req, res) => {
 // Now comes the part were we get all the current blogs. Earlier, we made a Blog model, and automatically a bunch of methods were made for it
 // The method we want to use to get all current blogs is Blog.find(). This gets us all of the documents in the "blogs" collection
 // Again, these callback functions are all asynchronous, so we can use .then() as well as the results object from the database when it is finished
-app.get('/all-blogs', (req, res) => {
-  Blog.find()
-    .then((results) => {
-      res.send(results);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-});
+// app.get('/all-blogs', (req, res) => {
+//   Blog.find()
+//     .then((results) => {
+//       res.send(results);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     })
+// });
 
 // Here, we are going to learn how to find a single blog
 // Just like the other mongoose functions, we first call app.get()
@@ -110,36 +110,64 @@ app.get('/all-blogs', (req, res) => {
 // But when are using mongoose, it handles the conversion of ObjectId into a string, and back again when we need to.
 // So if we want to find something by an ID, we can pass in a string in the .findByID() method, and Mongoose will handle that conversion and search for us
 // Again, this function is asynchronous
-app.get('/single-blog', (req, res) => {
-  Blog.findById('63f563bef2433ec179306457')
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-})
+// app.get('/single-blog', (req, res) => {
+//   Blog.findById('63f563bef2433ec179306457')
+//     .then((result) => {
+//       res.send(result);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     })
+// })
+// **THESE ARE ALL EXAMPLES OF HOW TO ADD NEW DOCUMENTS, VIEW ALL, AND VIEW ONLY ONE DOCUMENT.  
+// **Everything is commented out because this is not how we want to actually utilize these features
 
 // routes
 app.get('/', (req, res) => {
-  const blogs = [
-    {title: 'Sonic did a spin dash', snippet: 'Sonic did a spindash and it looked really cool. He than did a super peelout'},
-    {title: 'Shadow used chaos control', snippet: 'Shadow had a chaos emerald and used chaos control. He used it to stop time'},
-    {title: 'Silver used his telekinesis', snippet: 'Silver used his powers to lift a boulder. Afterwards, he launched the boulder at a mountain'}
-  ];
-  res.render('index', { title: 'Home', blogs: blogs });
+  // Before, we made dummy blogs and used those to render a list of non-existent blogs. 
+  // Now that we are learning how to save actual blogs we don't need the dummy blogs anymore, so we removed them
+  // Instead of rendering a view, we are going to make it so the home page automatically redirects to /blogs
+  // This means if you go to the home page, it will forward it on to the blogs page, and then it will render out all of the blogs from there
+  // We COULD make a separate home page, but for the sake of this practice tutorial, we are going to just redirect
+  res.redirect('/blogs')
 });
 
 app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new Blog' });
-});
-
 app.get('/about-us', (req, res) => {
   res.redirect('/about', { title: 'About' });
+});
+
+// blog routes
+// Here, we are going to make an ACTUAL home page that will render all of the current blogs
+// As know well by now, we will use app.get(), use the Blog.find() model and method, as well as the .then() and .catch() methods
+// In the index.ejs view, we are already expecting a property called "blogs"
+// What we can do is pass the array of blogs we get back into the index view, and we do not have to change anything at all in the index view
+// Because of this, we are going to render the index view, and we are also going pass in some data
+// The first piece of data we are going to pass in is a title, because in index.ejs, we were expecting a title in the head
+// The next piece of data we are going to pass in is whatever we get in the results object, that being all of the blogs
+// The property name in the index view is blogs, and we are passing in the results, so the line of code is "blogs: result"
+// And that is how we can use the model to display everything
+// **another method we can use if we want is .sort(), which lets us sort by any particular field inside the documents
+// **here, we will use createdAt which was the timestamps that mongoose automatically added on for us
+// **we are going to give it a value of "-1", which means ascending order (newest to oldest). "1" is the complete opposite of that.
+app.get('/blogs', (req, res) => {
+  Blog.find().sort({ createdAt: -1 })
+    .then((result) => {
+      res.render('index', {
+        title: 'All Blogs',
+        blogs: result
+      })
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+})
+
+app.get('/blogs/create', (req, res) => {
+  res.render('create', { title: 'Create a new Blog' });
 });
 
 app.use((req, res) => {
