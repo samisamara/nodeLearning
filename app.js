@@ -11,6 +11,7 @@ const { now } = require('lodash');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Blog = require('./models/blog');
+const { render } = require('ejs');
 
 const app = express();
 
@@ -84,6 +85,45 @@ app.post('/blogs', (req, res) => {
     });
 });
 
+// Now we want to learn how to request a single document (blog) from the database
+// In order to do this, we need to learn about Route Parameters
+// Route Parameters are parts of the routes that are variables, or could change
+// In this example: { localhost:3000/blogs/:id } the id is a variable and can change
+// If for an example, we went to localhost:3000/blogs/12345, the 12345 part is a route parameter
+// This is not limited to just numbers. The route parameters could be the word "hello"
+// All we are saying is the ":id" part of the route is changeable. It's like a variable that a user types in
+// We want to be able to extract this to see if it's an id, then we can query the database for the document with that id and send it back to the user
+// We already wrapped our code for each blog in an anchor tag that will link to each individual post, now we have more work to do on the server side
+// First, we want to create a GET request for when we are looking at an individual blog. The first part is simply { '/blogs/' }
+// As for the individual blog, we need to denote our route parameter.
+// In order to denote a route parameter, we use colon (:) and then id
+// We do not want to forget the : because if we looked for /blogs/id the website would literally try to reroute to the name "id" not the actaul blog
+// We also need to take a callback function just like the other GET requests
+// Inside this function, we want to try to find a single document in the database, with the id
+// But first we have to extract this id. We can get that id with the request object
+// to do this, we will make a new variable and set it equal to the id, which we will get using the .params property
+// After the .params, we want to use whatever name we used for the route parameter. Here it is called "id" so we will say {.id}
+//**It does not need to be named "id". If for an example, we named it "bloggers", we would use req.params.bloggers
+app.get('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+  // Now that we have the id, we have to get the document with this id from the database
+  // to do this, we will use our Blog() model, and use it's function .findById() and pass in the id inside it.
+  // As usual, we use the .then() method and a callback function
+  // Inside the callback function, we want to render a "details" page for the blog we want to show. 
+  // The first argument is going to be 'details' since this is what our view will be called
+  // For the second argument, we want to pass through the data that we get back
+  // We will call the property "blog" but it can be called whatever you want
+  // And that property will be equal to the result because the "result" in the .then() method because the result will be the single blog based on the id
+  // We also want to send in a "title" like every other route in our project, which will be "Blog Details"
+  Blog.findById(id)
+    .then(result => {
+      res.render('details', { blog: result, title: 'Blog Details' })
+    })
+    .catch(err => {
+      console.log(err)
+    })
+});
+
 app.get('/blogs/create', (req, res) => {
   res.render('create', { title: 'Create a new Blog' });
 });
@@ -91,3 +131,4 @@ app.get('/blogs/create', (req, res) => {
 app.use((req, res) => {
   res.status(404).render('404', { title: '404' });
 });
+

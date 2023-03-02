@@ -1,0 +1,20 @@
+<html lang="en">
+<%- include("./partials/head.ejs") %>
+
+<body>
+  <%- include("./partials/nav.ejs") %>
+
+  <!-- This portion is the main code we care abou here -->
+  <!-- We already passed in the blog data from the server, so we have access to all of the blog's properties, like title or body -->
+  
+  <div class="details content">
+    <h2><%= blog.title %></h2>
+    <div class="content">
+      <p><%= blog.body %></p>
+    </div>
+  </div>
+
+  <%- include("./partials/footer.ejs") %>
+
+</body>
+</html>
