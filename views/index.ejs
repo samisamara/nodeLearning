@@ -13,6 +13,7 @@
   <!-- We also gave this anchor tag a class of single because -->
   <div class="blogs content">
     <h2>All Blogs</h2>
+
     <% if (blogs.length > 0) { %>
       <% blogs.forEach(blog => { %>
         <a class="single" href="/blogs/<%= blog._id %>">
@@ -21,9 +22,9 @@
         </a>
       <% }) %>
     <% } else { %>
-      <p>There are no blogs to display</p>
+      <p>There are no blogs to display...</p>
     <% } %>
-
+    
   </div>
   <%- include('./partials/footer.ejs') %>
 </body>

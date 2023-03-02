@@ -4,17 +4,62 @@
 <body>
   <%- include("./partials/nav.ejs") %>
 
-  <!-- This portion is the main code we care abou here -->
+  <!-- This portion is the main code we care about here -->
   <!-- We already passed in the blog data from the server, so we have access to all of the blog's properties, like title or body -->
   
   <div class="details content">
     <h2><%= blog.title %></h2>
     <div class="content">
       <p><%= blog.body %></p>
+      <!-- This line is for the delete button, and we give it a class of "delete" for styling purposes, but it also has a special "data" attribute -->
+      <!-- This is a special attribute inside HTML, where we can basically add our own custom attributes, which we named "doc" here -->
+      <!-- In order to use the data attribute, we type { data-[customNameHere] } -->
+      <!-- We set this data attribute equal to a value, which is the blog id we want to delete -->
+      <!-- What this does is when clicked on, we will send a DELETE request for that document through the fetch API back to the server -->
+      <a class="delete" data-doc="<%= blog._id %>">delete</a>
     </div>
   </div>
 
   <%- include("./partials/footer.ejs") %>
+
+  <!-- front end javascript still works perfectly fine with no differences. However, Any front end javascript runs on the browser, not in the back end -->
+  <script>
+    // here, we are grabbing the delete anchor tag and storing it in a variable
+    const trashcan = document.querySelector('a.delete');
+    // Now, we need to add an event listener so we can detect when a user clicks on a blog
+    // First, we use the .addEventListener() function, and listen for a 'click' event, and pass in the event object to the callback function like normal
+    // Inside, we want to send a delete request to the server, which we will do by using the fetch API
+    // Before we do that, we need to figure out where we are going to send this request to.
+    // We will store that inside a const first so we can reference it later
+    // We are going to have to set our const = a template string to the route "/blogs/" + a variable, which is an id
+    // We can get that id from the data-doc attribute above
+    // The way we access that is by first typing trashcan, which is our reference to the element
+    // After this, we use .dataset, which is anything that uses the data attribute, and then our custom attribute name, which is doc, so we type ".doc"
+    trashcan.addEventListener('click', (e) => {
+      const endpoint = `/blogs/${trashcan.dataset.doc}`;
+      // Now we want to send a delete request to the endpoint.
+      // First, we need to use the fetch API
+      // Inside the fetch API, we specify that we want to send it to the variable "endpoint", which we made earlier
+      // Next, we also pass in an object, which is like an "options" object for the fetch API to say what type of request we want to send, etc
+      // The only thing we need to add here is the method, which is going to be the DELETE request. 
+      // This is an asynchronous function, so we will use .then() again
+      // Now we are sending this to the server, and the rest will be handled on the server
+      // After that is all done, we now have to use the json that was passed in the .then() method from the server to redirect the page
+      // We will apply that to the front end's .then() method below.
+      // What we will do is use the response object, which is the json data that comes back to us.
+      // We then need to use a method on that, which will be response.json()
+      // This new promise returns another promise, where it passes the response.json() data into an actual javascript object that we can use
+      // Because of this, we will add on another .then() method, where we get access to the actual javascript object, which we will call "data"
+      // All that is left is to take a window object, use it's .location method, then .href, and set that equal to where we want to go
+      // That destination is the data that we get back, and .redirect
+      fetch(endpoint, {
+        method: 'DELETE'
+      })
+      .then((response) => response.json())
+      .then((data) => window.location.href = data.redirect)
+      .catch(err => console.log(err))
+    })
+  </script>
 
 </body>
 </html>

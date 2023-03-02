@@ -42,6 +42,10 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
+app.get('/blogs/create', (req, res) => {
+  res.render('create', { title: 'Create a new blog' });
+});
+
 app.get('/about-us', (req, res) => {
   res.redirect('/about', { title: 'About' });
 });
@@ -122,6 +126,32 @@ app.get('/blogs/:id', (req, res) => {
     .catch(err => {
       console.log(err)
     })
+});
+
+// This block of code is how we delete documents (blogs) from our database
+// We already did everything we had to do on the front end, now we have to handle the server side to remove the blog from the database
+// First, we use the .delete() function, and pass in the same exact like we used for finding a single element, along with the the callback function
+// Then We want to save the id in a variable, which we do just like before, by using req.params.id
+app.delete('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+  // Now that we have done everything just like finding a single element from before, now we want to start the process of actually deleting the document
+  // First, we use the .findByIdAndDelete method, which is on our Blog model. Inside, we pass in our id. 
+  // The .findByIdAndDelete method goes out to the database, finds a record of the id passed in, and deletes for us.
+  // Again, asynchronous, so we tack on the .then() method with the result object
+  // What we want to do inside of the .then() method is send back some JSON to the front end of the browser
+  // We are not redirecting here is because we are sending an AJAX request (fetch request but for front end javascript)
+  // When we send an AJAX request, in Node, we cannot use a redirect as a response. We instead have to send a JSON or text data back to the browser
+  // What we will do instead is send some JSON data back to the browser, and that JSON data is going to have a redirect property
+  // When we recieve that data on the front end, we are going to use that redirect property, and that is going to be a url to where we want to redirect to
+  // That is going to be done from the front end, because we can't do this from the server because this is an AJAX request
+  // The way we will send JSON back is by using the response object and use the .json() method, which is the typical response we would use for an API
+  // Inside we are going to pass an object, which is is going to be a "redirect" property set to the url "/blogs"
+  // What we are saying here is after the .findByIdAndDelete method is complete, come back to the server, and we will send a json response to the browser
+  Blog.findByIdAndDelete(id)
+    .then(result => {
+      res.json({ redirect: '/blogs' })
+    })
+    .catch(err => console.log(err))
 });
 
 app.get('/blogs/create', (req, res) => {
