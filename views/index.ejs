@@ -4,13 +4,6 @@
 
   <%- include('./partials/nav.ejs') %>
 
-  <!-- Each blog document has an id, and when we use mongoose, it automatically converts that id into a string for us -->
-  <!-- We have access to the ObjectID inside this index view already, because we are already passing the blogs one by one into the view -->
-  <!-- We already have the _id property on each blog -->
-  <!-- What we will do to change this code a bit for us to get the blog ids is we will wrap everything within the .forEach() method in an anchor tag -->
-  <!-- In the anchor tag to /blogs/ + a dynamic variable which is on the blog, which is the id -->
-  <!-- So the link to the blog is /blogs/ + whatever the id of the blog is -->
-  <!-- We also gave this anchor tag a class of single because -->
   <div class="blogs content">
     <h2>All Blogs</h2>
 
