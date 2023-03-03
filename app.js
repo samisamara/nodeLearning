@@ -1,11 +1,29 @@
-// This is chapter8
+// This chapter is all about Express router, MVC, and controllers
+// As you may have noticed, our app.js file has been very long these past few chapters
+// This makes the code within this file messy and hard to maintain
+// Here we will learn how to use Express Router, and MVC, which will help us split our code into other files and make it much more manageable
 
+// First we will learn about Express Router
+// Express Router is a tool that comes with Express in of itself
+// We use the Express Router to split our routes into different files, and manage them in small groups of routes that belong together
+// This makes our app more modular, & it also makes it easier to update those parts of the map later on, & we don't have to have everything in one big file
+// First we will notice a lot of routes use '/blogs' in them. We could split them into their own route file
+// We should split these into their own file because they are all concerned with 1 type of source
+// First, we are going to create a new folder named 'routes', and inside that folder we will make a new file called 'blogRoutes'
+// We are naming it this because this new file will contain all of the blog routes.
+// Now, we are going to cut every single blog related route from the file, and paste them in the new blogRoutes file
+// Wihtin that file, we will set up the routers to work within that file, and come back to this file.
 const express = require('express');
 const { now } = require('lodash');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const Blog = require('./models/blog');
+const blogRoutes = require('./routes/blogRoutes');
+// It is important to note that we no longer need this Blog module here, since we are not using it directly in this file
+// We want to remove it from here, and instead cut and paste it into the blogRoutes file
+// const Blog = require('./models/blog');
 const { render } = require('ejs');
+
+
 
 const app = express();
 
@@ -32,62 +50,14 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new blog' });
-});
-
 app.get('/about-us', (req, res) => {
   res.redirect('/about', { title: 'About' });
 });
 
-// blog routes
-app.get('/blogs', (req, res) => {
-  Blog.find().sort({ createdAt: -1 })
-    .then((result) => {
-      res.render('index', {
-        title: 'All Blogs',
-        blogs: result
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-});
-
-app.post('/blogs', (req, res) => {
-  const blog = new Blog(req.body);
-  blog.save()
-    .then((result) => {
-      res.redirect('/blogs');
-    })
-    .catch((err) => {
-      console.log(err)
-    });
-});
-
-app.get('/blogs/:id', (req, res) => {
-  const id = req.params.id;
-  Blog.findById(id)
-    .then(result => {
-      res.render('details', { blog: result, title: 'Blog Details' })
-    })
-    .catch(err => {
-      console.log(err)
-    })
-});
-
-app.delete('/blogs/:id', (req, res) => {
-  const id = req.params.id;
-  Blog.findByIdAndDelete(id)
-    .then(result => {
-      res.json({ redirect: '/blogs' })
-    })
-    .catch(err => console.log(err))
-});
-
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new Blog' });
-});
+// Now that we are importing our blog routes, we will use them inside our express app by using app.use(), as we would if we were using a bit of middleware
+// All we need to do is type "blogRoutes" inside the paranthesis so we can use the blog routes
+// What this code does is it looks at all the routes in blogRoutes.js, and applies all of the handlers to the app.
+app.use(blogRoutes);
 
 app.use((req, res) => {
   res.status(404).render('404', { title: '404' });
