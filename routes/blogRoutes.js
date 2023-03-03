@@ -31,6 +31,13 @@ router.get('/blogs/create', (req, res) => {
   res.render('create', { title: 'Create a new blog' });
 });
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                        //
+//  Check the scoping thing in Net Ninja's video first!!!! Towards the end of the Express Router section  //
+//                                                                                                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.get('/blogs', (req, res) => {
   Blog.find().sort({ createdAt: -1 })
     .then((result) => {
