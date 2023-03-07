@@ -27,18 +27,11 @@ const router = express.Router();
 // By placing the '/blogs/:id' route handler first, the website may confuse the word "create" as an actual id
 // To fix this problem, we have to place the "create blog" handler above the '/blogs/:id' handler, since our code runs from top to bottom
 // This way, either create is found and used first, or the code moves on to the id.
-router.get('/blogs/create', (req, res) => {
+router.get('/create', (req, res) => {
   res.render('create', { title: 'Create a new blog' });
 });
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                                        //
-//  Check the scoping thing in Net Ninja's video first!!!! Towards the end of the Express Router section  //
-//                                                                                                        //
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-router.get('/blogs', (req, res) => {
+router.get('/', (req, res) => {
   Blog.find().sort({ createdAt: -1 })
     .then((result) => {
       res.render('index', {
@@ -51,7 +44,7 @@ router.get('/blogs', (req, res) => {
     })
 });
 
-router.post('/blogs', (req, res) => {
+router.post('/', (req, res) => {
   const blog = new Blog(req.body);
   blog.save()
     .then((result) => {
@@ -62,7 +55,7 @@ router.post('/blogs', (req, res) => {
     });
 });
 
-router.get('/blogs/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const id = req.params.id;
   Blog.findById(id)
     .then(result => {
@@ -73,17 +66,13 @@ router.get('/blogs/:id', (req, res) => {
     })
 });
 
-router.delete('/blogs/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   const id = req.params.id;
   Blog.findByIdAndDelete(id)
     .then(result => {
       res.json({ redirect: '/blogs' })
     })
     .catch(err => console.log(err))
-});
-
-router.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new Blog' });
 });
 
 // Step 3

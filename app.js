@@ -57,7 +57,17 @@ app.get('/about-us', (req, res) => {
 // Now that we are importing our blog routes, we will use them inside our express app by using app.use(), as we would if we were using a bit of middleware
 // All we need to do is type "blogRoutes" inside the paranthesis so we can use the blog routes
 // What this code does is it looks at all the routes in blogRoutes.js, and applies all of the handlers to the app.
-app.use(blogRoutes);
+// If we wanted to, we could take an additional step and scope this to a specific URL. 
+// We would scope this by changing the original [ app.use(blogRoutes) ] to include a string we want to look for in the URL, which in this case is '/blogs'
+// This line means we are only going to apply the blogRoutes when we go to '/blogs'
+// But if we used [ app.use('/blogs', blogRoutes) ], the webpage would not load, unless we typed "/blogs/blogs" in the URL
+// The reason why this happens is because we are already looking for "/blogs" in blogRoutes.js. 
+// By looking for "/blogs" in app.js as well, we are performing the same step twice, requiring us to look for "/blogs/blogs" instead of just "/blogs"
+// We will fix this by only looking for "/blogs" in app.js, since this step comes first, and remove the "/blogs" part in blogRoutes.js
+// This is because "/blogs" will be there automatically, since we are checking for that first here in app.js before calling the functions
+// app.use(blogRoutes);
+app.use('/blogs', blogRoutes);
+
 
 app.use((req, res) => {
   res.status(404).render('404', { title: '404' });
