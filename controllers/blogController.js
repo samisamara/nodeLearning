@@ -13,6 +13,11 @@ const blog_index = (req, res) => {
   })
 };
 
+// This code had to be changed, because earlier, we were not handling an error where a certain blog ID was not found. The page would just load infinitely
+// This is because all we did if there was an error is log the error to the console. 
+// What we want to do is return a 404 page
+// To fix this, most of the code will remain the same. All we do is remove the console.log line in the .catch() function
+// We will istead return a 404 page, as well as a title for the error. We will also set the status to 404 as well
 const blog_details = (req, res) => {
   const id = req.params.id;
   Blog.findById(id)
@@ -20,7 +25,7 @@ const blog_details = (req, res) => {
       res.render('blogs/details', { blog: result, title: 'Blog Details' })
     })
     .catch(err => {
-      console.log(err)
+      res.status(404).render('404', { title: 'Blog not found' })
     })
 };
 
