@@ -4,16 +4,6 @@
 <body>
   <%- include("../partials/nav.ejs") %>
 
-  <!-- We now want to add the ability to take the inputted values in the create blog form, and use that to create a POST request to add to the database -->
-  <!-- First, we need to add an "action" attribute to the form. This is essentially a value to where we want to send this request to -->
-  <!-- The value we will input is the blogs route -->
-  <!-- We also need another attribute in the form tag, named "method", which is the request method -->
-  <!-- Since we are going to be adding a blog to the database, we are going to make this a POST method -->
-  <!-- Now when we press submit, this button will send a POST request to the /blogs URL -->
-  <!-- We also want it to send all of this data and attatch it to the body of the POST request so it can access that on the server -->
-  <!-- In order to do this, we have to add "name" attributes to these input fields, which will be "title", "snippet", and "body" -->
-  <!-- Now, when we access the form data on the server, we will use those name properties to access that form data -->
-  <!-- Everything on this side is now complete. When we press submit, it will now send the POST request. Now we have to handle the rest on the server -->
   <div class="create-blog content">
     <form action="/blogs" method="POST">
       <label for="title">Blog title:</label>
