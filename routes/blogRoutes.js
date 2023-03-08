@@ -12,7 +12,10 @@ const express = require('express');
 //**Here we copied and pasted the Blog model from app.js, but the route to reaching that file is now different
 // The commented out code is what it used to be, and the most current verison is right underneath
 // const Blog = require('./models/blog');
-const Blog = require('../models/blog');
+// We moved this model into blogController.js, since the logic is no longer used here and is instead used in that file. 
+// const Blog = require('../models/blog');
+// We set up the export for our controller file, here, we are importing it into this router file
+const blogController = require('../controllers/blogController');
 
 // Step 2
 // using express.Router() WITH A CAPTIAL "R" is what creates us a new instance of a router object
@@ -27,53 +30,24 @@ const router = express.Router();
 // By placing the '/blogs/:id' route handler first, the website may confuse the word "create" as an actual id
 // To fix this problem, we have to place the "create blog" handler above the '/blogs/:id' handler, since our code runs from top to bottom
 // This way, either create is found and used first, or the code moves on to the id.
-router.get('/create', (req, res) => {
-  res.render('create', { title: 'Create a new blog' });
-});
+router.get('/create', blogController.blog_create_get);
 
-router.get('/', (req, res) => {
-  Blog.find().sort({ createdAt: -1 })
-    .then((result) => {
-      res.render('index', {
-        title: 'All Blogs',
-        blogs: result
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-});
+// This is the first part of using the MVC approach. The aim is to make our code cleaner and neater
+// What we have done is extracted all of our route handler functions and placed those into a seperate controller file
+// Then we can just reference those controller functions from this route file
+// First, we made a new folder named "controllers" and a file within that folder named "blogController.js"
+//**Notice how we have a "models", "views", and "controllers" folder. We now have all 3 components in the MVC methodology
+// For MVC, we cut all of the logic from this function and pasted it in the controller function.
+// We instead replace the callback function with a call to blogController's blog_index function
+// This does the exact same thing, it's just now we've extracted everything here and placed it in a controller file
+// We will repeat this step for every other route handler function
+router.get('/', blogController.blog_index);
 
-router.post('/', (req, res) => {
-  const blog = new Blog(req.body);
-  blog.save()
-    .then((result) => {
-      res.redirect('/blogs');
-    })
-    .catch((err) => {
-      console.log(err)
-    });
-});
+router.post('/', blogController.blog_create_post);
 
-router.get('/:id', (req, res) => {
-  const id = req.params.id;
-  Blog.findById(id)
-    .then(result => {
-      res.render('details', { blog: result, title: 'Blog Details' })
-    })
-    .catch(err => {
-      console.log(err)
-    })
-});
+router.get('/:id', blogController.blog_details);
 
-router.delete('/:id', (req, res) => {
-  const id = req.params.id;
-  Blog.findByIdAndDelete(id)
-    .then(result => {
-      res.json({ redirect: '/blogs' })
-    })
-    .catch(err => console.log(err))
-});
+router.delete('/:id', blogController.blog_delete);
 
 // Step 3
 // Now that we are using the router instance, we want to export this so we can use it in the app instance. 

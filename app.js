@@ -23,7 +23,21 @@ const blogRoutes = require('./routes/blogRoutes');
 // const Blog = require('./models/blog');
 const { render } = require('ejs');
 
-
+// There may be times where the MVC approach is preferable.
+// MVC stands for Model, View, Controller
+// MVC is a way of struncturing our code & files
+// This keeps our code more modular, reusable & easier to maintain
+// It is not essential to use the methodologies of MVC, but it can be extremely helpful. especially as the projects get larger
+// We have already seen the M and the V in MVC (Models and Views), but here is a quick run down of the 3 parts
+// M (Model) - Models are how we describe our data structure, and we use them to interact with the database
+// V (View) - Views are where we make our HTML templates that a user will see
+// C (Controller) - Controllers are what forms the link between oyur models and a views
+// In a sense, Controllers are like the middle men who use models to get data and pass that data into a view
+// We actually have already done that in our route handlers
+// But the idea of using controllers is we just those handler functions into a separate controller file
+// Then we can just reference those controller functions in our route file. 
+// Again, this is not mandatory, but it does make our code easier to manage
+// We are just splitting our code into different areas (files) and each area (file) has it's own job to do.  
 
 const app = express();
 
